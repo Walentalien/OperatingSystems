@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <time.h>
+#include <signal.h>
 
 #define MAX_PATIENTS_IN_HOSPITAL 3
 #define MAX_MEDICINE 6
@@ -152,7 +153,15 @@ void *doctor_thread(void *arg) {
     return NULL;
 }
 
+void handle_sigint(int sig) {
+    printf("\nCaught signal %d (Ctrl+C). Exiting...\n", sig);
+    exit(0);
+}
+
 int main(int argc, char *argv[]) {
+
+    signal(SIGINT, handle_sigint);
+
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <num_patients> <num_pharmacists>\n", argv[0]);
         return EXIT_FAILURE;

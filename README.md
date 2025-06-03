@@ -91,8 +91,18 @@ The doctor's work ends when there are no more patients to treat. Check Condition
 
 The use of appropriate mechanisms is to guarantee underdelivery, for example, to events: The doctor is sleeping even though there are 3 patients waiting for him, or the Pharmacist is unable to refill medicines, more than one pharmacist refills the medicine cabinet, etc.
 
-2 Versions of the problem:
+### 2 Versions of the problem:
 The task can be given in 2 versions:
 
 100% of the grade  - full solution as described above (doctor + patients and pharmacists)
 60% of the grade - partial solution (doctor + patients - no pharmacists and no first aid kit)
+
+## My comment
+In this simulation i assumed that patients need to go to doctor avery once in a while and never get cured;
+
+The simulation can be expanded:
+There will be a chance of a patient to get cured;
+And If there is less than 3 patients who need a doctor, ehat the last patient comes to a waiting room and there is lesss than 2 patientz he can askdoctor niely to threat them anyway
+
+How many patiens allowed in waiting Room
+Give different priority to patients in the waiting room
