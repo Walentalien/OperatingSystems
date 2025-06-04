@@ -83,7 +83,7 @@ After completing the action, the doctor goes back to sleep.
 (Message: [TIME] - Doctor: going back to sleep).
 
 
-## Additional task specification:
+### Additional task specification:
 The task also said to implement the program using threads (pthread) and synchronization mechanisms of the POSIX Threads library (mutex, condition variable). 
 When the program is started, the main thread creates threads for the Doctor, Patients and Pharmacists. 
 The number of patients and pharmacists should be passable as a run parameter of the program (the first parameter is the number of patients, the second parameter is the number of pharmacists). 
@@ -97,7 +97,7 @@ The task can be given in 2 versions:
 100% of the grade  - full solution as described above (doctor + patients and pharmacists)
 60% of the grade - partial solution (doctor + patients - no pharmacists and no first aid kit)
 
-## My comment
+### My comment
 In this simulation i assumed that patients need to go to doctor avery once in a while and never get cured;
 
 The simulation can be expanded:
@@ -106,3 +106,84 @@ And If there is less than 3 patients who need a doctor, ehat the last patient co
 
 How many patiens allowed in waiting Room
 Give different priority to patients in the waiting room
+
+
+## Assignment for 11 Class contents
+## Chat Application Assignment (Client-Server in C)
+
+###  Objective
+
+Create a simple **client-server chat application** using the **C programming language**.  
+The communication between the participants (clients and the server) should be implemented using **stream sockets (TCP)**.
+
+---
+
+##  Server
+
+- The server must accept its **port number** as a **command-line argument** when it starts.
+- It listens for incoming client connections on this port.
+
+---
+
+##  Client
+
+The client must accept the following **command-line arguments**:
+
+1. **Client name / identifier** (a string with a fixed maximum length)
+2. **Server address**, which includes:
+   - An **IPv4 address**
+   - A **port number**
+
+---
+
+##  Communication Protocol
+
+The system must support the following **text-based commands** from the clients:
+
+### ✅ `LIST`
+- Request the server to return a list of all currently **active clients**.
+- The server sends the list of connected client identifiers back to the requesting client.
+
+---
+
+###  `2ALL <message>`
+- Send a message to **all other connected clients**.
+- The client sends the message to the server.
+- The server forwards it to all other clients, including:
+  - The **sender’s identifier**
+  - The **current date and time**
+
+---
+
+###  `2ONE <client_id> <message>`
+- Send a message to a **specific client**.
+- The client specifies the **target client's identifier** and the message.
+- The server forwards the message only to that client, including:
+  - The **sender’s identifier**
+  - The **current date and time**
+
+---
+
+###  `STOP`
+- Inform the server that the client is **leaving the chat**.
+- The server removes the client from the list of active clients.
+
+---
+
+### ✅ `ALIVE` (server-initiated)
+- The server should periodically send a **heartbeat/ping ("ALIVE")** to all connected clients.
+- If a client **does not respond**, the server assumes it is disconnected and removes it from the active clients list.
+
+---
+
+## ⚠️ Ctrl+C Handling (Client Side)
+
+- When a client is terminated using **Ctrl+C**, it should automatically send a `STOP` command to the server.
+- This ensures clean disconnection and proper removal from the server’s client list.
+
+---
+
+## 🧠 Simplification Note
+
+- For simplicity, the server may store connected clients in a **fixed-size static array**.
+- This imposes a maximum number of clients that can participate in the chat simultaneously.
