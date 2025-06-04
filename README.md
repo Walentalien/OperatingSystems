@@ -118,14 +118,14 @@ The communication between the participants (clients and the server) should be im
 
 ---
 
-##  Server
+###  Server
 
 - The server must accept its **port number** as a **command-line argument** when it starts.
 - It listens for incoming client connections on this port.
 
 ---
 
-##  Client
+###  Client
 
 The client must accept the following **command-line arguments**:
 
@@ -136,7 +136,7 @@ The client must accept the following **command-line arguments**:
 
 ---
 
-##  Communication Protocol
+###  Communication Protocol
 
 The system must support the following **text-based commands** from the clients:
 
@@ -176,14 +176,19 @@ The system must support the following **text-based commands** from the clients:
 
 ---
 
-## ⚠️ Ctrl+C Handling (Client Side)
+### ⚠️ Ctrl+C Handling (Client Side)
 
 - When a client is terminated using **Ctrl+C**, it should automatically send a `STOP` command to the server.
 - This ensures clean disconnection and proper removal from the server’s client list.
 
 ---
 
-## 🧠 Simplification Note
+### 🧠 Simplification Note
 
 - For simplicity, the server may store connected clients in a **fixed-size static array**.
 - This imposes a maximum number of clients that can participate in the chat simultaneously.
+
+
+## Chat Application Assignment (Client-Server in C) – UDP Version
+## Task for lab 12 (LAST ONE)
+The same task but using UPD instead of TCP 
