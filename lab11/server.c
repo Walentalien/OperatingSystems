@@ -159,6 +159,7 @@ void *handle_client(void *arg) {
             snprintf(fullmsg, sizeof(fullmsg), "[%s] %s to %s: %s", timebuf, cli->id, target, msg);
             send_to_one(target, fullmsg, cli->socket);
         } else if (strncmp(buffer, "STOP", 4) == 0) {
+            printf("Client %s requested shutdown\n", cli->id);
             break;
         }
     }

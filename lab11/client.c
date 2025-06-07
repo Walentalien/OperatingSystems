@@ -15,9 +15,21 @@ int sock;
 char client_id[ID_SIZE];
 
 void handle_sigint(int sig) {
-    send(sock, "STOP", 4, 0);
-    close(sock);
-    printf("\nDisconnected\n");
+    printf("\nShutting down client...\n");
+    
+    // Send STOP message to server
+    if (sock > 0) {
+        char shutdown_msg[] = "STOP";
+        send(sock, shutdown_msg, strlen(shutdown_msg), 0);
+        printf("Sent shutdown message to server\n");
+        
+        // Give server a moment to process the message
+        usleep(100000);  // 100ms delay
+        
+        close(sock);
+    }
+    
+    printf("Disconnected from server\n");
     exit(0);
 }
 
