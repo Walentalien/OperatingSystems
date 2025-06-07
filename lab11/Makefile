@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -pthread
-TARGETS = server client
+TARGETS = server client try/timestamp
 
 all: $(TARGETS)
 

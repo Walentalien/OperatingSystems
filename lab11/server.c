@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <arpa/inet.h> // for optinal stuff
 #include <pthread.h>
 #include <signal.h>
 #include <time.h>
@@ -20,6 +21,8 @@ typedef struct {
 
 client_t clients[MAX_CLIENTS];
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
+// Global server socket (for cleanup function)
+int server_sock = -1;  
 
 void send_to_all(char *message, int from_sock);
 void send_to_one(char *id, char *message, int from_sock);
@@ -27,6 +30,31 @@ void send_list(int to_sock);
 void remove_client(int sock);
 void *handle_client(void *arg);
 void *alive_pinger(void *arg);
+
+void cleanup_and_exit(int signum) {
+    printf("\nShutting down server...\n");
+    
+    // Close all client connections
+    pthread_mutex_lock(&clients_mutex);
+    for (int i = 0; i < MAX_CLIENTS; i++) {
+        if (clients[i].active) {
+            printf("Closing connection to client: %s\n", clients[i].id);
+            // Send shutdown message to client
+            char shutdown_msg[] = "Server is shutting down. Goodbye!\n";
+            send(clients[i].socket, shutdown_msg, strlen(shutdown_msg), 0);
+            close(clients[i].socket);
+            clients[i].active = 0;
+        }
+    }
+    pthread_mutex_unlock(&clients_mutex);
+    
+    // Close server socket
+    if (server_sock != -1) {
+        close(server_sock);
+    }
+    
+    exit(signum);
+}
 
 void timestamp(char *buffer, size_t size) {
     time_t now = time(NULL);
@@ -39,10 +67,23 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    int server_sock = socket(AF_INET, SOCK_STREAM, 0);
+    // Set up signal handler
+    signal(SIGINT, cleanup_and_exit);
+    
+    server_sock = socket(AF_INET, SOCK_STREAM, 0);
     int port = atoi(argv[1]);
     struct sockaddr_in server_addr = { .sin_family = AF_INET, .sin_port = htons(port), .sin_addr.s_addr = INADDR_ANY };
     bind(server_sock, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    
+    // Get and print socket information
+    struct sockaddr_in actual_addr;
+    socklen_t len = sizeof(actual_addr);
+    if (getsockname(server_sock, (struct sockaddr *)&actual_addr, &len) == 0) {
+        printf("Server bound to address: %s:%d\n", 
+               inet_ntoa(actual_addr.sin_addr), 
+               ntohs(actual_addr.sin_port));
+    }
+    
     listen(server_sock, MAX_CLIENTS);
 
     pthread_t ping_thread;
@@ -54,6 +95,15 @@ int main(int argc, char *argv[]) {
         struct sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);
         int client_sock = accept(server_sock, (struct sockaddr *)&client_addr, &client_len);
+
+        // Get and print client's address information
+        struct sockaddr_in peer_addr;
+        socklen_t peer_len = sizeof(peer_addr);
+        if (getpeername(client_sock, (struct sockaddr *)&peer_addr, &peer_len) == 0) {
+            printf("New client connected from: %s:%d\n", 
+                   inet_ntoa(peer_addr.sin_addr), 
+                   ntohs(peer_addr.sin_port));
+        }
 
         pthread_mutex_lock(&clients_mutex);
         int i;

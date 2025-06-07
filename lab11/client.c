@@ -45,9 +45,28 @@ int main(int argc, char *argv[]) {
     int port = atoi(argv[3]);
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
+    //Handle socket creation failure    
+    if (sock < 0) {
+        perror("Socket creation failed");
+        return EXIT_FAILURE;
+    }
+
     struct sockaddr_in server_addr = { .sin_family = AF_INET, .sin_port = htons(port) };
     inet_pton(AF_INET, server_ip, &server_addr.sin_addr);
-    connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr));
+    //TODO: When handling the invalid server IP myself program fails but w/o it the call defaults to localhost
+    // if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
+    //     fprintf(stderr, "Error: Invalid IP address '%s'\n", server_ip);
+    //     close(sock);
+    //     return EXIT_FAILURE;
+    // }
+
+    printf("Connecting to server at %s:%d...\n", server_ip, port);
+    if (connect(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connection failed");
+        close(sock);
+        return EXIT_FAILURE;
+    }
+    printf("Connected to server\n");
 
     signal(SIGINT, handle_sigint);
 

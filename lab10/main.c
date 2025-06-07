@@ -50,6 +50,8 @@ void *patient_thread(void *arg) {
 
     while (1) {
         int sleep_time = rand() % 4 + 2;
+        printf("Patient(%d): Wybieram się , będe za : %d\n", id, sleep_time);
+
         sleep(sleep_time);
 
         pthread_mutex_lock(&mutex);
@@ -57,8 +59,9 @@ void *patient_thread(void *arg) {
         if (waiting_patients >= MAX_PATIENTS_IN_HOSPITAL) {
             pthread_mutex_unlock(&mutex);
             print_time();
-            printf("Patient(%d): Too many patients, retrying later\n", id);
-            sleep(rand() % 4 + 2);
+            int sleep_time = rand() % 4 + 2;
+            printf("Patient(%d): Too many patients, retrying later in %d seconds\n", id, sleep_time);
+            sleep(sleep_time);
             continue;
         }
 
@@ -86,8 +89,10 @@ void *pharmacist_thread(void *arg) {
     free(arg);
 
     while (1) {
-        sleep(rand() % 11 + 5); // Travel time
-
+        int sleep_time = rand() % 11 + 5;
+        printf("Pharmacist(%d): Ide do szpitala bede za  %d\n", id, sleep_time);
+        sleep(sleep_time); // Travel time
+        
         pthread_mutex_lock(&mutex);
 
         while (medicine == MAX_MEDICINE) {
