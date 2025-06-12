@@ -89,8 +89,12 @@ int main(int argc, char *argv[]) {
 
     char buffer[BUFFER_SIZE];
     while (fgets(buffer, sizeof(buffer), stdin)) {
+        //TODO: Fix sending message issue 
+        // Remove newline and check if line is empty
         buffer[strcspn(buffer, "\n")] = '\0';
-        send(sock, buffer, strlen(buffer), 0);
+        if (strlen(buffer) > 0) {  // Only send if there's actual content
+            send(sock, buffer, strlen(buffer), 0);
+        }
     }
 
     return 0;

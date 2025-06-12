@@ -21,7 +21,7 @@ typedef struct {
 
 client_t clients[MAX_CLIENTS];
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
-// Global server socket (for cleanup function)
+// for cleanup
 int server_sock = -1;  
 
 void send_to_all(char *message, int from_sock);
